@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AhliGiziID - Forum Tanya Jawab Nutrisi</title>
+    <!-- Menggunakan Font Awesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #2e8b57; /* Sea Green untuk kesan kesehatan */
+            --primary-dark: #1f633d;
+            --accent-color: #f39c12;
+            --text-dark: #333;
+            --text-light: #666;
+            --bg-light: #f4f7f6;
+            --white: #ffffff;
+            --border-radius: 8px;
+            --shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* --- HEADER & NAV --- */
+        header {
+            background-color: var(--white);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-actions button {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-actions button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .nav-actions button.logout-btn {
+            background-color: #e74c3c;
+        }
+
+        .user-badge {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        /* --- MAIN LAYOUT --- */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 2.5fr 1fr; /* Kolom kiri lebih lebar */
+            gap: 2rem;
+        }
+
+        /* --- LEFT COLUMN: FEED --- */
+        .feed-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .question-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e1e1e1;
+        }
+
+        .q-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 1rem;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--bg-light);
+        }
+
+        .user-info h4 {
+            font-size: 1rem;
+            color: var(--text-dark);
+            margin-bottom: 2px;
+        }
+
+        .user-info span {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .q-content h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+
+        .q-content p {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            white-space: pre-line; /* Agar enter terbaca */
+        }
+
+        .tags {
+            margin-bottom: 1rem;
+        }
+
+        .tag {
+            background: #eefbf3;
+            color: var(--primary-color);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-right: 5px;
+            font-weight: 600;
+        }
+
+        .q-actions {
+            display: flex;
+            gap: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .action-btn:hover, .action-btn.active {
+            color: var(--primary-color);
+        }
+
+        /* --- ANSWER SECTION --- */
+        .answers-section {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 2px dashed #eee;
+        }
+
+        .answer-title {
+            font-size: 1rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .answer-item {
+            background: #fafafa;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .expert-badge {
+            background: var(--accent-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 5px;
+            text-transform: uppercase;
+        }
+
+        .answer-input-area {
+            margin-top: 1rem;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        /* --- RIGHT COLUMN: SIDEBAR --- */
+        aside {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .sidebar-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .promo-card {
+            background: linear-gradient(135deg, #2e8b57 0%, #1f633d 100%);
+            color: white;
+            text-align: left;
+        }
+
+        .promo-card h3 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .promo-card p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-promo {
+            background: var(--white);
+            color: var(--primary-color);
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-promo:hover {
+            transform: translateY(-2px);
+        }
+
+        .sidebar-list h3 {
+            text-align: left;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            border-bottom: 2px solid var(--bg-light);
+            padding-bottom: 0.5rem;
+        }
+
+        .sidebar-list ul {
+            list-style: none;
+        }
+
+        .sidebar-list li {
+            text-align: left;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+        
+        .sidebar-list li a {
+            text-decoration: none;
+            color: var(--text-dark);
+        }
+        
+        .sidebar-list li a:hover {
+            color: var(--primary-color);
+        }
+
+        /* --- MODALS & TOASTS --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #333;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 2000;
+            transform: translateY(100px);
+            transition: transform 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+        }
+
+        .toast.success { border-left: 4px solid #2ecc71; }
+        .toast.error { border-left: 4px solid #e74c3c; }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            aside {
+                position: static;
+                order: -1; /* Sidebar di atas pada mobile untuk CTA */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="navbar">
+            <a href="#" class="logo">
+                <i class="fas fa-apple-alt"></i> AhliGiziID
+            </a>
+            
+            <div class="user-badge" id="userBadge">
+                <i class="fas fa-user-md"></i> <span id="userName">Dr. Nutrisi</span>
+            </div>
+
+            <div class="nav-actions">
+                <button id="authBtn" onclick="toggleAuth()">
+                    <i class="fas fa-sign-in-alt"></i> Login Ahli Gizi
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Left Column: Questions -->
+        <section class="feed">
+            <div class="feed-header">
+                <h2>Pertanyaan Terbaru</h2>
+                <button class="btn-primary" onclick="openQuestionModal()">
+                    <i class="fas fa-plus"></i> Buat Pertanyaan
+                </button>
+            </div>
+
+            <!-- Question Container (Populated by JS) -->
+            <div id="questionsContainer">
+                <!-- Questions will be injected here -->
+            </div>
+        </section>
+
+        <!-- Right Column: Sidebar -->
+        <aside>
+            <!-- CTA Card -->
+            <div class="sidebar-card promo-card">
+                <h3><i class="fas fa-comments"></i> Konsultasi Personal</h3>
+                <p>Butuh jawaban yang lebih privat dan detail? Hubungi ahli kami secara langsung melalui ruang chat khusus.</p>
+                <a href="https://chat.z.ai/space/j1wkn4kmf6b1-art" target="_blank" class="btn-promo">
+                    Mulai Konsultasi <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <!-- Topics List -->
+            <div class="sidebar-card sidebar-list">
+                <h3>Topik Populer</h3>
+                <ul>
+                    <li><a href="#"># Diet Pasca Operasi</a></li>
+                    <li><a href="#"># Nutrisi Anak</a></li>
+                    <li><a href="#"># Intoleransi Laktosa</a></li>
+                    <li><a href="#"># Menambah Berat Badan</a></li>
+                </ul>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Modal: Ask Question -->
+    <div class="modal-overlay" id="questionModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('questionModal')">&times;</span>
+            <h2>Buat Pertanyaan Baru</h2>
+            <p style="margin-bottom: 15px; font-size: 0.9rem; color: #666;">Tanyakan keluhan nutrisi Anda, ahli gizi kami akan membantu menjawab.</p>
+            <form onsubmit="submitQuestion(event)">
+                <div class="form-group">
+                    <label>Judul Pertanyaan</label>
+                    <input type="text" id="qTitle" placeholder="Contoh: Menu makanan untuk diabetes..." required>
+                </div>
+                <div class="form-group">
+                    <label>Nama Anda</label>
+                    <input type="text" id="qAuthor" placeholder="Nama samaran atau asli" required>
+                </div>
+                <div class="form-group">
+                    <label>Detail Pertanyaan</label>
+                    <textarea id="qContent" rows="5" placeholder="Ceritakan detail kondisi, usia, berat badan, dll..." required></textarea>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%;">Kirim Pertanyaan</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Login Simulation -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-content" style="text-align: center;">
+            <span class="close-modal" onclick="closeModal('loginModal')">&times;</span>
+            <h2 style="margin-bottom: 10px;">Login Ahli Gizi</h2>
+            <p style="margin-bottom: 20px; color: #666;">Masuk untuk memverifikasi akun profesional Anda dan mulai menjawab pertanyaan pasien.</p>
+            <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: left;">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" value="ahli@ahligizi.id" disabled style="background: #eee;">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" value="********" disabled style="background: #eee;">
+                </div>
+            </div>
+            <button class="btn-primary" style="width: 100%;" onclick="performLogin()">Masuk sebagai Ahli Gizi</button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="fas fa-info-circle"></i>
+        <span id="toastMessage">Pesan notifikasi</span>
+    </div>
+
+    <script>
+        // --- DATA AWAL (Mock Data) ---
+        // Menggunakan data dari gambar referensi
+        let questions = [
+            {
+                id: 1,
+                author: "Serendipity123 Try",
+                avatar: "https://picsum.photos/seed/serendipity/50/50.jpg",
+                time: "2 jam yang lalu",
+                title: "Anak pasca operasi, diare dan malas makan",
+                content: "Mohon bantuannya dok.\n\nAnak saya baru selesai operasi. Kondisi saat ini:\n- Berat badan: 39kg\n- Tinggi: 153cm\n- Sering diare, nafsu makan menurun drastis.\n- Aktivitas sedikit, tidur lebih banyak.\n\nDokter bilang status gizi kurang (level 4) dan ada intoleransi laktosa. Dianjurkan minum ASI minimal sebanyak mungkin, tapi susah sekali.\n\nMakanan apa yang cocok untuk pemulihan?",
+                tags: ["Anak", "Pasca Operasi", "Intoleransi Laktosa"],
+                likes: 0,
+                answers: []
+            }
+        ];
+
+        // --- STATE MANAGEMENT ---
+        let isLoggedIn = false; // Simulasi status login
+        let currentUser = null;
+
+        // --- DOM ELEMENTS ---
+        const questionsContainer = document.getElementById('questionsContainer');
+        const authBtn = document.getElementById('authBtn');
+        const userBadge = document.getElementById('userBadge');
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderQuestions();
+        });
+
+        // --- CORE FUNCTIONS ---
+
+        // 1. Render Questions ke Layar
+        function renderQuestions() {
+            questionsContainer.innerHTML = '';
+
+            questions.forEach(q => {
+                const card = document.createElement('article');
+                card.className = 'question-card';
+                
+                // Generate Tags HTML
+                const tagsHtml = q.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+                
+                // Generate Answers HTML
+                let answersHtml = '';
+                if (q.answers.length > 0) {
+                    answersHtml = `<div class="answers-section">
+                        <h4 class="answer-title">${q.answers.length} Jawaban Ahli:</h4>`;
+                    
+                    q.answers.forEach(ans => {
+                        answersHtml += `
+                        <div class="answer-item">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                                <strong style="color:var(--primary-color)">${ans.author} <span class="expert-badge">Ahli Gizi</span></strong>
+                                <small style="color:#999">${ans.time}</small>
+                            </div>
+                            <p style="font-size:0.95rem;">${ans.content}</p>
+                        </div>`;
+                    });
+                    
+                    answersHtml += `</div>`;
+                } else {
+                    answersHtml = `<div class="answers-section"><p class="answer-title">Belum ada komentar.</p></div>`;
+                }
+
+                // Form Jawaban (Hanya muncul jika Login)
+                const inputArea = `
+                    <div class="answer-input-area">
+                        <textarea id="input-${q.id}" placeholder="Tulis jawaban profesional Anda di sini..."></textarea>
+                        <button class="btn-primary" style="margin-top:10px; font-size:0.9rem;" onclick="submitAnswer(${q.id})">
+                            <i class="fas fa-paper-plane"></i> Kirim Jawaban
+                        </button>
+                    </div>
+                `;
+
+                const loginPrompt = `
+                    <div class="answer-input-area" style="text-align:center; padding: 10px; background: #fafafa; border-radius:8px;">
+                        <p style="font-size:0.9rem; color:#666; margin-bottom:8px;">
+                            <i class="fas fa-lock"></i> Hanya Ahli Gizi yang bisa menjawab.
+                        </p>
+                        <button class="btn-primary" style="margin:0 auto; font-size:0.8rem; background-color:#7f8c8d;" onclick="openLoginModal()">
+                            Login Ahli Gizi
+                        </button>
+                    </div>
+                `;
+
+                card.innerHTML = `
+                    <div class="q-header">
+                        <img src="${q.avatar}" alt="Avatar" class="avatar">
+                        <div class="user-info">
+                            <h4>${q.author}</h4>
+                            <span><i class="far fa-clock"></i> ${q.time}</span>
+                        </div>
+                    </div>
+                    <div class="q-content">
+                        <h3>${q.title}</h3>
+                        <p>${q.content}</p>
+                        <div class="tags">${tagsHtml}</div>
+                    </div>
+                    <div class="q-actions">
+                        <button class="action-btn" onclick="likeQuestion(${q.id})">
+                            <i class="far fa-thumbs-up"></i> ${q.likes} Suka
+                        </button>
+                        <button class="action-btn">
+                            <i class="far fa-comment-alt"></i> ${q.answers.length} Komentar
+                        </button>
+                        <button class="action-btn">
+                            <i class="fas fa-share"></i> Bagikan
+                        </button>
+                    </div>
+                    ${answersHtml}
+                    ${isLoggedIn ? inputArea : loginPrompt}
+                `;
+                
+                questionsContainer.appendChild(card);
+            });
+        }
+
+        // 2. Sistem Login / Logout
+        function toggleAuth() {
+            if (isLoggedIn) {
+                // Logout Logic
+                isLoggedIn = false;
+                currentUser = null;
+                authBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login Ahli Gizi';
+                authBtn.classList.remove('logout-btn');
+                userBadge.style.display = 'none';
+                showToast('Berhasil logout', 'success');
+                renderQuestions(); // Re-render untuk menyembunyikan input jawaban
+            } else {
+                // Buka Modal Login
+                openLoginModal();
+            }
+        }
+
+        function openLoginModal() {
+            document.getElementById('loginModal').classList.add('active');
+        }
+
+        function performLogin() {
+            // Simulasi Login Sukses
+            isLoggedIn = true;
+            currentUser = "Dr. Nutrisi";
+            
+            // Update UI
+            authBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
+            authBtn.classList.add('logout-btn');
+            userBadge.style.display = 'flex';
+            
+            closeModal('loginModal');
+            showToast('Login Berhasil! Selamat datang, Dokter.', 'success');
+            renderQuestions(); // Re-render untuk menampilkan input jawaban
+        }
+
+        // 3. Fitur Tanya Jawab (Interaksi)
+        
+        // Like pertanyaan
+        function likeQuestion(id) {
+            const q = questions.find(item => item.id === id);
+            if (q) {
+                q.likes++;
+                renderQuestions();
+                showToast('Anda menyukai pertanyaan ini', 'success');
+            }
+        }
+
+        // Submit Jawaban
+        function submitAnswer(qId) {
+            const input = document.getElementById(`input-${qId}`);
+            const content = input.value.trim();
+
+            if (!content) {
+                showToast('Mohon isi jawaban terlebih dahulu', 'error');
+                return;
+            }
+
+            const question = questions.find(q => q.id === qId);
+            
+            if (question) {
+                question.answers.push({
+                    author: currentUser,
+                    content: content,
+                    time: "Baru saja"
+                });
+                
+                renderQuestions();
+                showToast('Jawaban berhasil dikirim!', 'success');
+            }
+        }
+
+        // Buat Pertanyaan Baru
+        function submitQuestion(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('qTitle').value;
+            const author = document.getElementById('qAuthor').value;
+            const content = document.getElementById('qContent').value;
+
+            const newQuestion = {
+                id: Date.now(),
+                author: author,
+                avatar: `https://picsum.photos/seed/${author}/50/50.jpg`,
+                time: "Baru saja",
+                title: title,
+                content: content,
+                tags: ["Umum"], // Default tag
+                likes: 0,
+                answers: []
+            };
+
+            // Add to top of array
+            questions.unshift(newQuestion);
+            
+            closeModal('questionModal');
+            renderQuestions();
+            showToast('Pertanyaan berhasil dipublikasikan', 'success');
+            
+            // Reset form
+            e.target.reset();
+        }
+
+        // --- UTILITIES ---
+
+        function openQuestionModal() {
+            document.getElementById('questionModal').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                event.target.classList.remove('active');
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            const msgSpan = document.getElementById('toastMessage');
+            
+            msgSpan.innerText = message;
+            toast.className = `toast ${type} show`;
+
+            // Remove class after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+    </script>
+</body>
+</html>

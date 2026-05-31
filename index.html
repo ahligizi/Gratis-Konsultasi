@@ -13,7 +13,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
     <style>
-        /* --- CSS TETAP SAMA SEPERTI SEBELUMNYA --- */
+        /* --- CSS STYLE --- */
         :root {
             --primary-color: #2e8b57;
             --primary-dark: #1f633d;
@@ -172,42 +172,42 @@
         </div>
     </div>
 
-    <!-- Modal: Login -->
     <!-- Modal: Login / Register -->
-<div class="modal-overlay" id="loginModal">
-    <div class="modal-content" style="text-align: center;">
-        <span class="close-modal" onclick="closeModal('loginModal')">&times;</span>
-        
-        <!-- Judul akan berubah via JS -->
-        <h2 id="authTitle">Login Ahli Gizi</h2>
-        <p id="authSubtitle" style="margin-bottom: 20px; color: #666;">Masuk untuk mulai menjawab konsultasi.</p>
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-content" style="text-align: center;">
+            <span class="close-modal" onclick="closeModal('loginModal')">&times;</span>
+            
+            <!-- Judul akan berubah via JS -->
+            <h2 id="authTitle">Login Ahli Gizi</h2>
+            <p id="authSubtitle" style="margin-bottom: 20px; color: #666;">Masuk untuk mulai menjawab konsultasi.</p>
 
-        <form onsubmit="handleAuth(event)">
-            <div class="form-group">
-                <input type="email" id="authEmail" required placeholder="Alamat Email (contoh: dokter@gmail.com)">
-            </div>
-            <div class="form-group">
-                <input type="password" id="authPass" required placeholder="Password (Min. 6 karakter)">
-            </div>
-            <button type="submit" class="btn-primary" style="width: 100%;" id="authBtnSubmit">
-                Masuk
-            </button>
-        </form>
+            <form onsubmit="handleAuth(event)">
+                <div class="form-group">
+                    <input type="email" id="authEmail" required placeholder="Alamat Email">
+                </div>
+                <div class="form-group">
+                    <input type="password" id="authPass" required placeholder="Password (Min. 6 karakter)">
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%;" id="authBtnSubmit">
+                    Masuk
+                </button>
+            </form>
 
-        <!-- Tombol Toggle -->
-        <div style="margin-top: 15px; font-size: 0.9rem;">
-            <span id="toggleText">Belum punya akun? </span>
-            <a href="#" onclick="toggleAuthMode()" style="color: var(--primary-color); font-weight: bold; text-decoration: none;">
-                Daftar di sini
-            </a>
+            <!-- Tombol Toggle -->
+            <div style="margin-top: 15px; font-size: 0.9rem;">
+                <span id="toggleText">Belum punya akun? </span>
+                <a href="#" onclick="toggleAuthMode()" style="color: var(--primary-color); font-weight: bold; text-decoration: none;">
+                    Daftar di sini
+                </a>
+            </div>
         </div>
     </div>
-</div>
+
     <!-- Toast -->
     <div id="toast" class="toast"><span id="toastMessage"></span></div>
 
     <script>
-        // --- 1. KONFIGURASI FIREBASE (PAKAI KODE ANDA) ---
+        // --- 1. KONFIGURASI FIREBASE ---
         const firebaseConfig = {
             apiKey: "AIzaSyA8EPjjZl2FOWRKLsdItXQP-fq-0DrXF3A",
             authDomain: "web-konsul-gizi.firebaseapp.com",
@@ -225,17 +225,15 @@
 
         // --- 2. STATE & VARIABLES ---
         let currentUser = null;
-        // Tambahkan variabel ini setelah 'let currentUser = null;'
-let isRegisterMode = false; // Default adalah mode Login
-        let questions = []; // Array ini akan diisi oleh Firestore
+        let isRegisterMode = false; // Mode Login/Register
+        let questions = []; 
 
         // --- 3. EVENT LISTENERS ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Cek Auth Status
             auth.onAuthStateChanged((user) => {
                 currentUser = user;
                 updateUIForLogin(user);
-                loadQuestions(); // Load data saat ready
+                loadQuestions(); 
             });
         });
 
@@ -245,14 +243,12 @@ let isRegisterMode = false; // Default adalah mode Login
         function loadQuestions() {
             document.getElementById('loading').style.display = 'block';
             
-            // Listener realtime: Setiap ada perubahan di DB, tampilan otomatis update
             db.collection("questions")
-                .orderBy("timestamp", "desc") // Urutkan dari yang terbaru
+                .orderBy("timestamp", "desc") 
                 .onSnapshot((snapshot) => {
                     questions = [];
                     snapshot.forEach((doc) => {
                         const data = doc.data();
-                        // Konversi timestamp Firebase ke format tanggal Indonesia (Sederhana)
                         let timeStr = "Baru saja";
                         if (data.timestamp) {
                             const date = data.timestamp.toDate();
@@ -269,7 +265,7 @@ let isRegisterMode = false; // Default adalah mode Login
                     document.getElementById('loading').style.display = 'none';
                 }, (error) => {
                     console.error("Error loading questions: ", error);
-                    showToast("Gagal memuat data", "error");
+                    showToast("Gagal memuat data. Cek koneksi internet.", "error");
                     document.getElementById('loading').style.display = 'none';
                 });
         }
@@ -286,7 +282,7 @@ let isRegisterMode = false; // Default adalah mode Login
                 author: author,
                 content: content,
                 likes: 0,
-                answers: [], // Array kosong untuk jawaban
+                answers: [], 
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             })
             .then(() => {
@@ -308,7 +304,6 @@ let isRegisterMode = false; // Default adalah mode Login
 
             const questionRef = db.collection("questions").doc(qId);
 
-            // Update field 'answers' dengan menambahkan objek baru ke array
             questionRef.update({
                 answers: firebase.firestore.FieldValue.arrayUnion({
                     author: currentUser.email,
@@ -327,8 +322,6 @@ let isRegisterMode = false; // Default adalah mode Login
         // Like Pertanyaan
         function likeQuestion(qId) {
             const questionRef = db.collection("questions").doc(qId);
-            
-            // Kita increment likes by 1
             questionRef.update({
                 likes: firebase.firestore.FieldValue.increment(1)
             })
@@ -340,86 +333,74 @@ let isRegisterMode = false; // Default adalah mode Login
             });
         }
 
-        // --- 5. FUNGSI AUTHENTICATION ---
+        // --- 5. FUNGSI AUTHENTICATION (LOGIN & REGISTER) ---
 
-        // --- FUNGSI AUTHENTICATION (GABUNGAN LOGIN & REGISTER) ---
+        function toggleAuthMode() {
+            isRegisterMode = !isRegisterMode; 
 
-// Fungsi ini dipanggil saat tombol "Daftar di sini" diklik
-function toggleAuthMode() {
-    isRegisterMode = !isRegisterMode; // Balik status (true/false)
+            const title = document.getElementById('authTitle');
+            const subtitle = document.getElementById('authSubtitle');
+            const btn = document.getElementById('authBtnSubmit');
+            const toggleText = document.getElementById('toggleText');
+            const linkText = document.querySelector('#loginModal a');
 
-    const title = document.getElementById('authTitle');
-    const subtitle = document.getElementById('authSubtitle');
-    const btn = document.getElementById('authBtnSubmit');
-    const toggleText = document.getElementById('toggleText');
-    const linkText = document.querySelector('#loginModal a');
+            if (isRegisterMode) {
+                title.innerText = "Daftar Ahli Gizi Baru";
+                subtitle.innerText = "Buat akun untuk mulai berkontribusi.";
+                btn.innerText = "Daftar Sekarang";
+                toggleText.innerText = "Sudah punya akun? ";
+                linkText.innerText = "Login disini";
+            } else {
+                title.innerText = "Login Ahli Gizi";
+                subtitle.innerText = "Masuk untuk mulai menjawab konsultasi.";
+                btn.innerText = "Masuk";
+                toggleText.innerText = "Belum punya akun? ";
+                linkText.innerText = "Daftar di sini";
+            }
+        }
 
-    if (isRegisterMode) {
-        // Tampilan Mode Daftar
-        title.innerText = "Daftar Ahli Gizi Baru";
-        subtitle.innerText = "Buat akun untuk mulai berkontribusi.";
-        btn.innerText = "Daftar Sekarang";
-        toggleText.innerText = "Sudah punya akun? ";
-        linkText.innerText = "Login disini";
-    } else {
-        // Tampilan Mode Login
-        title.innerText = "Login Ahli Gizi";
-        subtitle.innerText = "Masuk untuk mulai menjawab konsultasi.";
-        btn.innerText = "Masuk";
-        toggleText.innerText = "Belum punya akun? ";
-        linkText.innerText = "Daftar di sini";
-    }
-}
+        function handleAuth(e) {
+            e.preventDefault();
+            const email = document.getElementById('authEmail').value;
+            const pass = document.getElementById('authPass').value;
 
-// Fungsi Utama Penanganan Form
-function handleAuth(e) {
-    e.preventDefault();
-    const email = document.getElementById('authEmail').value;
-    const pass = document.getElementById('authPass').value;
-
-    if (isRegisterMode) {
-        // LOGIKA REGISTER (DAFTAR)
-        auth.createUserWithEmailAndPassword(email, pass)
-            .then((userCredential) => {
-                // Sukses daftar & otomatis login
-                closeModal('loginModal');
-                showToast('Pendaftaran Berhasil! Selamat bergabung.', 'success');
-                
-                // Reset form ke mode login untuk berikutnya
-                isRegisterMode = false;
-                toggleAuthMode(); 
-            })
-            .catch((error) => {
-                // Error Handling Register
-                if (error.code === 'auth/email-already-in-use') {
-                    showToast('Email ini sudah terdaftar. Silakan Login.', 'error');
-                } else if (error.code === 'auth/weak-password') {
-                    showToast('Password terlalu lemah (min 6 karakter).', 'error');
-                } else {
-                    showToast('Gagal Daftar: ' + error.message, 'error');
-                }
-            });
-
-    } else {
-        // LOGIKA LOGIN (MASUK)
-        auth.signInWithEmailAndPassword(email, pass)
-            .then(() => {
-                closeModal('loginModal');
-                showToast('Login Berhasil', 'success');
-            })
-            .catch((error) => {
-                showToast('Login Gagal: Email atau password salah.', 'error');
-            });
-    }
-}
-        // Helper: Membuat Akun Admin via Console (Opsional)
-        window.createAdminAccount = function() {
-            const email = prompt("Email Baru:");
-            const pass = prompt("Password:");
-            if(email && pass) {
+            if (isRegisterMode) {
+                // LOGIKA REGISTER
                 auth.createUserWithEmailAndPassword(email, pass)
-                    .then(() => alert("Akun dibuat!"))
-                    .catch(e => alert(e.message));
+                    .then((userCredential) => {
+                        closeModal('loginModal');
+                        showToast('Pendaftaran Berhasil! Selamat bergabung.', 'success');
+                        isRegisterMode = false;
+                        toggleAuthMode(); 
+                    })
+                    .catch((error) => {
+                        if (error.code === 'auth/email-already-in-use') {
+                            showToast('Email ini sudah terdaftar. Silakan Login.', 'error');
+                        } else if (error.code === 'auth/weak-password') {
+                            showToast('Password terlalu lemah (min 6 karakter).', 'error');
+                        } else {
+                            showToast('Gagal Daftar: ' + error.message, 'error');
+                        }
+                    });
+
+            } else {
+                // LOGIKA LOGIN
+                auth.signInWithEmailAndPassword(email, pass)
+                    .then(() => {
+                        closeModal('loginModal');
+                        showToast('Login Berhasil', 'success');
+                    })
+                    .catch((error) => {
+                        showToast('Login Gagal: Email atau password salah.', 'error');
+                    });
+            }
+        }
+
+        function toggleAuth() {
+            if (currentUser) {
+                auth.signOut().then(() => showToast('Logout Berhasil', 'success'));
+            } else {
+                openLoginModal();
             }
         }
 
@@ -440,7 +421,7 @@ function handleAuth(e) {
                 btn.classList.remove('logout-btn');
                 badge.style.display = 'none';
             }
-            renderQuestions(); // Re-render untuk show/hide tombol jawab
+            renderQuestions(); 
         }
 
         function renderQuestions() {
@@ -451,7 +432,6 @@ function handleAuth(e) {
                 const card = document.createElement('article');
                 card.className = 'question-card';
 
-                // Logika tampilan jawaban
                 let answersHtml = '';
                 if (q.answers && q.answers.length > 0) {
                     answersHtml = `<div class="answers-section"><h4 class="answer-title">${q.answers.length} Jawaban:</h4>`;
@@ -470,7 +450,6 @@ function handleAuth(e) {
                     answersHtml = `<div class="answers-section"><p class="answer-title">Belum ada jawaban.</p></div>`;
                 }
 
-                // Logika Input Jawaban (Hanya jika Login)
                 const inputArea = currentUser ? `
                     <div class="answer-input-area">
                         <textarea id="input-${q.id}" placeholder="Jawab sebagai ahli..."></textarea>
